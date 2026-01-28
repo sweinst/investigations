@@ -1,0 +1,10 @@
+﻿---
+BasedOnStyle: Chromium
+NamespaceIndentation: All
+AlignAfterOpenBracket: BlockIndent
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: 130
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+UseTab: Never
+IndentWidth: 4
+TabWidth: 4
