@@ -3,6 +3,20 @@
 #include <print>
 #include <random>
 
+using namespace std::chrono_literals;
+using sclock = std::chrono::steady_clock;
+
+uint64_t array_size = 20;
+uint64_t n_iterations = 250'000'000;
+
+uint64_t read_uint64(const char* txt) {
+    try {
+        return std::strtoll(txt, nullptr, 10);
+    } catch (const std::exception&) {
+        return -1;
+    }
+}
+
 void usage(const char* progname, bool error = false) {
     std::println("Usage: {} [-s <number>] [-n <number>] [--help|-h]", progname);
     std::println(
@@ -12,12 +26,6 @@ void usage(const char* progname, bool error = false) {
     std::println("  [-h|--help] show this help message\n");
     std::exit(error ? 1 : 0);
 }
-
-using namespace std::chrono_literals;
-using sclock = std::chrono::steady_clock;
-
-uint64_t array_size = 20;
-uint64_t n_iterations = 250'000'000;
 
 void test() {
     uint64_t n_elements = 1ULL << array_size;
@@ -51,13 +59,13 @@ void test() {
 int main(int argc, char** argv) {
     for (int i = 0; i < argc; ++i) {
         if (std::strcmp(argv[i], "-s") == 0 && i + 1 < argc) {
-            array_size = std::strtoll(argv[++i], nullptr, 10);
+            array_size = read_uint64(argv[++i]);
             if (array_size <= 0 || array_size >= 64) {
                 std::print("Invalid array size: {}\n", argv[i]);
                 usage(argv[0], true);
             }
         } else if (std::strcmp(argv[i], "-n") == 0 && i + 1 < argc) {
-            n_iterations = std::strtoll(argv[++i], nullptr, 10);
+            n_iterations = read_uint64(argv[++i]);
             if (n_iterations <= 0) {
                 std::print("Invalid number of iterations: {}\n", argv[i]);
                 usage(argv[0], true);
