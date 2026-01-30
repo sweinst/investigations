@@ -3,6 +3,7 @@ import sys
 import platform
 import statistics
 from subprocess import Popen, PIPE
+from unittest import result
 from tqdm import trange
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -13,9 +14,10 @@ if not os.path.exists(caches_path):
     sys.exit(1)
 
 n_iterations = 10_000_000
-m_size_max = 30
+m_size_max = 28
 n_repeats = 100
-result = []
+times = []
+sizes = []
 for size2 in trange(1, m_size_max + 1, leave=True, desc="Array size"):
     cmd = [caches_path, '-n', str(n_iterations), "-s", str(size2)]
     tmp = []
@@ -26,9 +28,16 @@ for size2 in trange(1, m_size_max + 1, leave=True, desc="Array size"):
             print(f"Error executing command: {' '.join(cmd)} ({stderr.decode()})", file=sys.stderr)
             print(stderr.decode(), file=sys.stderr)
             sys.exit(1)
-    tmp.append(float(stdout.decode()))
-    result.append((size2, statistics.median(tmp)))
+        tmp.append(float(stdout.decode()))
+    times.append(statistics.median(tmp))
+    sizes.append(1 << size2)
+    
 
-print(result)
-
-
+import matplotlib.pyplot as plt
+plt.xscale('log', base=2)
+plt.xlabel('Array size (elements)')
+plt.ylabel('Average access time (ns)')
+plt.grid()
+plt.grid(which='minor', color="0.9")
+plt.plot(sizes, times)
+plt.show()
